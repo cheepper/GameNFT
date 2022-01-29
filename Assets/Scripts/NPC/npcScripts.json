@@ -1,0 +1,35 @@
+{
+  "npcs": [
+    {
+        "id" : 1,
+        "npcName": "Dummy npc 01",
+        "script": [
+            "\"Hmmm...\"",
+            "\"...ooh! Hello?\"",
+            "\"...what do you want?\""
+        ]
+    },
+    {
+        "id": 2,
+        "npcName": "Dummy npc 02",
+        "script": [
+            "\"Nice weather...\"",
+            "\"...see ya!\""
+        ]
+    },
+    {
+        "id": 3,
+        "npcName": "Dummy 03",
+        "script": [
+            "\"I have nothing to say to you... BYE!\""
+        ]
+    },
+    {
+        "id": 4,
+        "npcName": "Dummy 04",
+        "script": [
+            "\".....( mumbling )\""
+        ]
+    }
+  ]
+}

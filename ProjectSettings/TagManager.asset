@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - PointAxis
+  - WallBound
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Wall
+  - Water
+  - UI
+  - Ground
+  - Obstacles
+  - NPC
+  - Teleport
+  - UIPanel
+  - Machine
+  - Options
+  - Door
+  - Object
+  - LootBox
+  - Blocks
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Wall
+    uniqueID: 2556270263
+    locked: 0
+  - name: Object
+    uniqueID: 3143404747
+    locked: 0
+  - name: NPC
+    uniqueID: 1878260907
+    locked: 0
+  - name: Player
+    uniqueID: 3647535721
+    locked: 0
