@@ -11,7 +11,7 @@ public class SceneManager : MonoBehaviour
     void Awake()
     {
         transition = canvas.gameObject.GetComponent<Transition>();
-        transition.fadesOut.gameObject.SetActive(true);
+        transition.curtainFadesOut.gameObject.SetActive(true);
         //canvas.gameObject.SetActive(true);
         Debug.Log("Awake");
     }

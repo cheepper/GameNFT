@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     private bool hasQueueInteraction = false;
     private Vector3 queuesInteractPos;
     private Transform queuesTransform;
-    private bool isTeleporting = false, isTransitioning, isInteractingToObjects = false, isInteractingToLootBox = false, isInteractingToBlocks = false, isUsingMachine = false, onUIOptions = false;
+    private bool isTeleporting = false, isInteractingDoor, isInteractingToObjects = false, isInteractingToLootBox = false, isInteractingToBlocks = false, isUsingMachine = false, onUIOptions = false;
     private SpriteRenderer spriteRenderer;
     private float stepRate = 0.3f;
 	private float stepCoolDown;
@@ -131,8 +131,8 @@ public class Player : MonoBehaviour
                         // Check if player click on the door
                         else if (checkAssignLayer("Door"))
                         {
-                            isTransitioning = true;
-                            Debug.Log("go transition " + isTransitioning);
+                            isInteractingDoor = true;
+                            Debug.Log("go transition " + isInteractingDoor);
                         }
                         // Check if player on the Interactable objects
                         else if (checkAssignLayer("Object"))
@@ -158,7 +158,7 @@ public class Player : MonoBehaviour
                         {
                             // Cancel any queues for interaction
                             hasQueueInteraction = false;
-                            isTransitioning = false;
+                            isInteractingDoor = false;
                             isTeleporting = false;
                             isTalkingToNPC = false;
                             isInteractingToObjects = false;
@@ -260,13 +260,13 @@ public class Player : MonoBehaviour
                     {
                         isTeleporting = false;
                         Teleport warpPortal = raycastHitInfo.transform.gameObject.GetComponent<Teleport>();
-                        warpPortal.WarpDestination();
+                        //warpPortal.WarpDestination();
                     }
-                    else if (isTransitioning)
+                    else if (isInteractingDoor)
                     {
-                        isTransitioning = false;
+                        isInteractingDoor = false;
                         Teleport warpPortal = raycastHitInfo.transform.gameObject.GetComponent<Teleport>();
-                        warpPortal.useTransition = true;
+                        warpPortal.isUsingDoor = true;
                         //warpPortal.WarpDestination(true);
                     }
                     else if (isTalkingToNPC)
@@ -311,8 +311,17 @@ public class Player : MonoBehaviour
         }
         catch
         {
+            stopMoving();
             Debug.Log("Object disappear");
         }
+    }
+
+    void stopMoving() {
+        hasQueueInteraction = false;
+        MeshAgent.ResetPath();
+        FrontBodyAnimator.SetBool("isRunning", false);
+        BackBodyAnimator.SetBool("isRunning", false);
+        Debug.Log("Reset path");
     }
 
     bool hasReachedDestination() {

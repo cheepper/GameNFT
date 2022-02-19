@@ -8,7 +8,7 @@ public class Teleport : MonoBehaviour
     public Transform player;
     //public Transform globalLight;
     //public Transform playerSpotlight;
-    public bool useTransition = false;
+    public bool isUsingDoor = false;
     public bool isEnteringBuilding;
     public bool isEnteringDungeon;
     public Canvas canvas;
@@ -24,17 +24,20 @@ public class Teleport : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (useTransition) {
-            //canvas.gameObject.SetActive(true);
-            transition.container.gameObject.SetActive(false);
-            StartCoroutine(transition.waitDoorTransition());
-            Invoke("WarpDestination", 0.5f);
-            useTransition = false;
-            Debug.Log("useTransition");
+        if (isUsingDoor) {
+            StartCoroutine(transition.fadeAndOut(() =>
+            {
+                
+                Invoke("warpDestination", 0.0f);
+                Debug.Log("on complete");
+            }
+            ));
+            isUsingDoor = false;
+            Debug.Log("isUsingDoor");
         }
     }
 
-    public void WarpDestination() {
+    bool warpDestination() {
         if (isEnteringBuilding)
         {
             //globalLight.gameObject.SetActive(false);
@@ -51,6 +54,6 @@ public class Teleport : MonoBehaviour
             //playerSpotlight.gameObject.SetActive(false);
 
         }
-        MeshAgent.Warp(portDestination.transform.position);
+        return MeshAgent.Warp(portDestination.transform.position);
     }
 }

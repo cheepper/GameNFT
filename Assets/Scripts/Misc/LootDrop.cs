@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class LootDrop : MonoBehaviour
 {
+    [Header("Destroy loot at")]
+    public float duration = 5;
     private Vector3 velocity = Vector3.up;
     private Rigidbody rb;
     private Vector3 startPosition;
@@ -41,6 +43,6 @@ public class LootDrop : MonoBehaviour
             this.enabled = false;
         }
 
-        Destroy(transform.gameObject, 30);
+        Destroy(transform.gameObject, duration);
     }
 }
