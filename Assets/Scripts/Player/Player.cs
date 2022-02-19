@@ -216,9 +216,9 @@ public class Player : MonoBehaviour
             }
         }
         
-        mainCamera.orthographicSize  -= 12.0f * Time.deltaTime;
-        if (mainCamera.orthographicSize <= 12.0f) {
-            mainCamera.orthographicSize = 12.0f;
+        mainCamera.orthographicSize  -= 20.0f * Time.deltaTime;
+        if (mainCamera.orthographicSize <= 15.0f) {
+            mainCamera.orthographicSize = 15.0f;
         }
         //Debug.Log("Interact Zoomin");
     }
@@ -229,9 +229,9 @@ public class Player : MonoBehaviour
             Transform dot = PopupMessage.transform.GetChild(i);
             dot.GetComponent<Renderer>().enabled = false;
         }
-        mainCamera.orthographicSize  += 12.0f * Time.deltaTime;
-        if (mainCamera.orthographicSize >= 15.0f) {
-            mainCamera.orthographicSize = 15.0f;
+        mainCamera.orthographicSize  += 20.0f * Time.deltaTime;
+        if (mainCamera.orthographicSize >= 20.0f) {
+            mainCamera.orthographicSize = 20.0f;
         }
 
         // Close the interaction window
