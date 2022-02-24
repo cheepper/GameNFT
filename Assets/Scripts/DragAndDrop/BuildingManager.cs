@@ -33,7 +33,6 @@ public class BuildingManager : MonoBehaviour
             {
                 pendingObj.transform.position = new Vector3(
                     RoundToNearestGrid(pos.x),
-                    //RoundToNearestGrid(pos.y),
                     (pendingObj.transform.localScale.y / 2),
                     RoundToNearestGrid(pos.z)
                     );
@@ -43,10 +42,18 @@ public class BuildingManager : MonoBehaviour
             {
                 pendingObj.transform.position = pos;
             }
-            
+
             if (Input.GetMouseButtonDown(0))
             {
-                PlaceObject();
+                if (CanBePlaced(pendingObj.transform.GetComponent<DragableObject>()))
+                {
+                    PlaceObject();
+                }
+                else
+                {
+                    Debug.Log("cannot place here");
+                }
+                
             }
         }
     }
@@ -69,6 +76,11 @@ public class BuildingManager : MonoBehaviour
     public void SelectObject(int index)
     {
         pendingObj = Instantiate(objects[index], pos, transform.rotation);
+    }
+
+    private bool CanBePlaced(DragableObject param) {
+
+        return param.detected;
     }
 
     public void ToggleGrid()
