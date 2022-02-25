@@ -47,7 +47,7 @@ public class Player : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        testDebugAndLog();
+        //testDebugAndLog();
 
         // Player is on the move
         if (MeshAgent.hasPath)
@@ -356,7 +356,7 @@ public class Player : MonoBehaviour
             stepCoolDown = stepRate;
         }
     }
-
+    
     void testDebugAndLog() {
         if (Input.GetKeyUp("space"))
         {

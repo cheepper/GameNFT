@@ -30,7 +30,7 @@ public class DragableObject : MonoBehaviour
             if (i >= 1)
             {
                 cubeRenderer.material.SetColor("_Color", Color.red);
-                Debug.Log("Hit : " + hits[i].name + i);
+                //Debug.Log("Hit : " + hits[i].name + i);
                 detected = false;
             }
             else

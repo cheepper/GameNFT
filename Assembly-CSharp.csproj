@@ -53,7 +53,6 @@
     <UnityVersion>2020.3.21f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Isometric\PlaceableObject.cs" />
     <Compile Include="Assets\Scripts\Misc\Teleport.cs" />
     <Compile Include="Assets\Scripts\SmartContract\SpendToken.cs" />
     <Compile Include="Assets\Scripts\SmartContract\SmartContractBridge.cs" />
@@ -64,7 +63,6 @@
     <Compile Include="Assets\Scripts\SmartContract\ClientTransactionScript.cs" />
     <Compile Include="Assets\Scripts\DragAndDrop\DragableObject.cs" />
     <Compile Include="Assets\Scripts\Misc\JsonReader.cs" />
-    <Compile Include="Assets\Scripts\Isometric\ObjectDragging.cs" />
     <Compile Include="Assets\Scripts\Misc\SpawnLoot.cs" />
     <Compile Include="Assets\Scripts\NPC\NPCScripts.cs" />
     <Compile Include="Assets\Scripts\Misc\LootDrop.cs" />
@@ -76,7 +74,6 @@
     <Compile Include="Assets\Scripts\DragAndDrop\BuildingManager.cs" />
     <Compile Include="Assets\Scripts\SmartContract\FreeToken.cs" />
     <Compile Include="Assets\Scripts\Player\RandomIdle.cs" />
-    <Compile Include="Assets\Scripts\Isometric\BuildingSystem.cs" />
     <Compile Include="Assets\Scripts\SmartContract\AdminTransactionScript.cs" />
     <Compile Include="Assets\Scripts\Misc\ObjectSpriteController.cs" />
     <Compile Include="Assets\Scripts\Player\CharacterSpriteController.cs" />

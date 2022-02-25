@@ -69,7 +69,7 @@ public class BuildingManager : MonoBehaviour
         }
     }
     
-    void PlaceObject()
+    private void PlaceObject()
     {
         pendingObj.AddComponent<UnityEngine.AI.NavMeshObstacle>();
         UnityEngine.AI.NavMeshObstacle obstacle = pendingObj.GetComponent<UnityEngine.AI.NavMeshObstacle>();

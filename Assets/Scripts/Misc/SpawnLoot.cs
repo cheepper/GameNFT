@@ -40,7 +40,7 @@ public class SpawnLoot : MonoBehaviour
             Loot();
         }
 
-        
+        /*
         if (Input.GetKeyUp("space"))
         {
             Loot();
@@ -50,7 +50,7 @@ public class SpawnLoot : MonoBehaviour
             //BackBodyAnimator.SetTrigger("Pickup");
             print("Space key was released");
         }
-        
+        */
     }
 
     private void Loot() {
