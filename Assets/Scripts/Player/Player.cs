@@ -6,21 +6,24 @@ using UnityEngine.EventSystems;
 public class Player : MonoBehaviour
 {
     public LayerMask whatCanBeClickedOn;
+    public string[] interactingQueues; // = { "NPC", "Teleport", "Door", "Object", "LootBox", "Blocks", "Machine" };
+    public string layerName;
     public GameObject FrontBody, BackBody;
     public GameObject PopupMessage, PopupBox;
     //public AudioClip footStep;
     public Canvas canvas;
-    public bool isTalkingToNPC = false;
     private UnityEngine.AI.NavMeshAgent MeshAgent;
     private Camera mainCamera;
     private Animator FrontBodyAnimator, BackBodyAnimator, PopBubbleMessageAnimator, PopBoxMessageAnimator;
     private CharacterSpriteController CharacterSpriteScript;
     private Transform TextMessage;
     private RaycastHit raycastHitInfo;
-    private bool hasQueueInteraction = false;
+    public bool approachingForInteraction = false;
     private Vector3 queuesInteractPos;
     private Transform queuesTransform;
-    private bool isTeleporting = false, isInteractingDoor, isInteractingToObjects = false, isInteractingToLootBox = false, isInteractingToBlocks = false, isUsingMachine = false, onUIOptions = false;
+    //private bool isTeleporting = false, isInteractingDoor, isInteractingToObjects = false, isInteractingToLootBox = false, isInteractingToBlocks = false, isUsingMachine = false, onUIOptions = false;
+    public bool zoomDialog = false;
+    private bool onUIOptions = false;
     private SpriteRenderer spriteRenderer;
     private float stepRate = 0.3f;
 	private float stepCoolDown;
@@ -44,36 +47,31 @@ public class Player : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        if (Input.GetKeyUp("space")) {
-            //showBlockchainBridgeWindow();
-            //popMessage();
-            //FrontBodyAnimator.SetTrigger("Pickup");
-            //BackBodyAnimator.SetTrigger("Pickup");
-            print("Space key was released");
-        }
+        testDebugAndLog();
 
         // Player is on the move
-        if (MeshAgent.hasPath) {
+        if (MeshAgent.hasPath)
+        {
             // Play the walking sound
-            stepCoolDown -= Time.deltaTime;
-            if (stepCoolDown < -0.05f) {
-                //GetComponent<AudioSource>().pitch = 0.8f + Random.Range (-0.025f, 0.025f);
-                //GetComponent<AudioSource>().PlayOneShot (footStep, 0.5f);
-                stepCoolDown = stepRate;
-            }
+            audioFootStep();
             // Zoom-out when suddenly move while interacting
             zoomOutInteraction();
             //Debug.Log("player is moving");
         }
 
         // Move the player while holding down left mouse button
-        if (Input.GetMouseButton(0) && !onUIOptions) {
-            if (EventSystem.current.IsPointerOverGameObject()) {
+        if (Input.GetMouseButton(0) && !onUIOptions)
+        {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
                 //Debug.Log("Clicked on the UI");
-            } else {
+            }
+            else
+            {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hitInfo;
-                if (Physics.Raycast(ray, out hitInfo, 100, whatCanBeClickedOn)) {
+                if (Physics.Raycast(ray, out hitInfo, 100, whatCanBeClickedOn))
+                {
                     //FrontBodyAnimator.SetBool("isWalking", true);
                     //BackBodyAnimator.SetBool("isWalking", true);
                     FrontBodyAnimator.SetBool("isRunning", true);
@@ -85,139 +83,128 @@ public class Player : MonoBehaviour
         }
 
         // Move the player by clicking on the field with left mouse button
-        if (Input.GetMouseButtonUp(0)) {
-            if (EventSystem.current.IsPointerOverGameObject()) {
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
                 //Debug.Log("Clicked on the UI");
-            } else {
+            }
+            else
+            {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 // Check if player has UI options window showsup
-                if (onUIOptions) {
+                if (onUIOptions)
+                {
                     // For 2D sprite raycast hit in 3D field 
                     //RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
                     //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     //RaycastHit hit;
-                    try {
+                    try
+                    {
                         //if(hit.transform.gameObject.layer == LayerMask.NameToLayer("Options")) {
-                        if (Physics.Raycast (ray, out hit, 100, LayerMask.GetMask("Options"))) {
+                        if (Physics.Raycast(ray, out hit, 100, LayerMask.GetMask("Options")))
+                        {
                             PopBoxMessageAnimator.SetBool("isInteracting", false);
                             showBlockchainBridgeWindow(int.Parse(hit.transform.gameObject.tag));
-                            isUsingMachine = false;
+                            //isUsingMachine = false;
                             onUIOptions = false;
-                            Debug.Log("object clicked: "+hit.transform.gameObject.tag);
+                            Debug.Log("object clicked: " + hit.transform.gameObject.tag);
                         }
-                    } catch {
-                        isUsingMachine = false;
+                    }
+                    catch
+                    {
+                        //isUsingMachine = false;
                         onUIOptions = false;
                         //canvas.gameObject.SetActive(false);
                         Debug.Log("Null, 2D sprite raycast reference");
                     }
-                } else {
+                }
+                else
+                {
                     //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     //RaycastHit hit;
                     // Filter what can be click on the field
-                    if (Physics.Raycast(ray, out hit, 100, whatCanBeClickedOn)) {
+                    if (Physics.Raycast(ray, out hit, 100, whatCanBeClickedOn))
+                    {
                         raycastHitInfo = hit;
-                        // Check if player click on the NPC
-                        if (checkAssignLayer("NPC"))
+
+                        foreach (string item in interactingQueues)
                         {
-                            isTalkingToNPC = true;
-                        }
-                        // Check if player click on the teleport platform
-                        else if (checkAssignLayer("Teleport"))
-                        {
-                            isTeleporting = true;
-                        }
-                        // Check if player click on the door
-                        else if (checkAssignLayer("Door"))
-                        {
-                            isInteractingDoor = true;
-                            Debug.Log("go transition " + isInteractingDoor);
-                        }
-                        // Check if player on the Interactable objects
-                        else if (checkAssignLayer("Object"))
-                        {
-                            isInteractingToObjects = true;
-                        }
-                        // Check if player on the Interactable loot box
-                        else if (checkAssignLayer("LootBox"))
-                        {
-                            isInteractingToLootBox = true;
-                        }
-                        // Check if player on the Interactable blocks/Mine
-                        else if (checkAssignLayer("Blocks"))
-                        {
-                            isInteractingToBlocks = true;
-                        }
-                        // Check if player on the Interactable Machine
-                        else if (checkAssignLayer("Machine")) 
-                        {
-                            isUsingMachine = true;
-                        } 
-                        else 
-                        {
-                            // Cancel any queues for interaction
-                            hasQueueInteraction = false;
-                            isInteractingDoor = false;
-                            isTeleporting = false;
-                            isTalkingToNPC = false;
-                            isInteractingToObjects = false;
-                            isInteractingToLootBox = false;
-                            isInteractingToBlocks = false;
-                            //isUsingMachine = false;
+                            // Check if player click on the NPC
+                            if (checkAssignLayer(item))
+                            {
+                                layerName = item;
+                                break;
+                            }
+                            else
+                            {
+                                approachingForInteraction = false;
+                            }
                         }
                     }
                 }
             }
         }
-        spriteRenderingInteraction();
+        eventDialogZoom();
     }
 
     bool checkAssignLayer(string layerName) {
-        if(raycastHitInfo.transform.gameObject.layer == LayerMask.NameToLayer(layerName)) {
-            hasQueueInteraction = true;
+        if (raycastHitInfo.transform.gameObject.layer == LayerMask.NameToLayer(layerName))
+        {
+            approachingForInteraction = true;
             return true;
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
-    void spriteRenderingInteraction() {
+    void eventDialogZoom() {
         // Check whether interacting with NPC or interactable objects
-        //if (isTalkingToNPC || isInteractingToObjects || isUsingMachine) {
-        if (isTalkingToNPC || isUsingMachine)
-            {
-                // Zoom-in when player stop and interacting
-                if (!MeshAgent.hasPath) {
+        if (zoomDialog)
+        {
+            // Zoom-in when player stop and interacting
+            //if (!MeshAgent.hasPath)
+            //{
                 zoomInInteraction();
-            }
+            //}
+            /*
+             * Commenting out for later use
+             * 
             // Flip popup bubble message
             spriteRenderer = PopupMessage.GetComponent<SpriteRenderer>();
-            if (CharacterSpriteScript.isRight) {
+            if (CharacterSpriteScript.isRight)
+            {
                 //Comment-out replaced by dot popup, use only if using popupmessage instance
                 PopupMessage.transform.localPosition = new Vector3(-0.20f, 1.25f, 10.0f);
                 spriteRenderer.flipX = false;
-            } else {
+            }
+            else
+            {
                 //Comment-out replaced by dot popup, use only if using popupmessage instance
                 PopupMessage.transform.localPosition = new Vector3(-0.40f, 1.25f, 10.0f);
                 spriteRenderer.flipX = true;
             }
-        } else {
+            */
+        }
+        else
+        {
             zoomOutInteraction();
         }
     }
 
     public void zoomInInteraction() {
-        if (isTalkingToNPC) { 
-            for (int i = 0; i < 4; i++)
-            {
-                Transform dot = PopupMessage.transform.GetChild(i);
-                dot.GetComponent<Renderer>().enabled = true;
-            }
+        for (int i = 0; i < 4; i++)
+        {
+            Transform dot = PopupMessage.transform.GetChild(i);
+            dot.GetComponent<Renderer>().enabled = true;
         }
-        
-        mainCamera.orthographicSize  -= 20.0f * Time.deltaTime;
-        if (mainCamera.orthographicSize <= 15.0f) {
+
+        mainCamera.orthographicSize -= 20.0f * Time.deltaTime;
+        if (mainCamera.orthographicSize <= 15.0f)
+        {
             mainCamera.orthographicSize = 15.0f;
         }
         //Debug.Log("Interact Zoomin");
@@ -229,8 +216,9 @@ public class Player : MonoBehaviour
             Transform dot = PopupMessage.transform.GetChild(i);
             dot.GetComponent<Renderer>().enabled = false;
         }
-        mainCamera.orthographicSize  += 20.0f * Time.deltaTime;
-        if (mainCamera.orthographicSize >= 20.0f) {
+        mainCamera.orthographicSize += 20.0f * Time.deltaTime;
+        if (mainCamera.orthographicSize >= 20.0f)
+        {
             mainCamera.orthographicSize = 20.0f;
         }
 
@@ -246,57 +234,13 @@ public class Player : MonoBehaviour
         // them in queue so when the player is on the move it automatically interact
         try
         {
-            if (hasQueueInteraction)
+            if (approachingForInteraction)
             {
                 float distance = Vector3.Distance(transform.position, raycastHitInfo.transform.position);
                 //Debug.Log("Approaching interact " + dist);
                 if (distance < 5.0)
                 {
-                    hasQueueInteraction = false;
-                    MeshAgent.ResetPath();
-                    //Debug.Log("Interact!!");
-                    // Check what did the player interact with
-                    if (isTeleporting)
-                    {
-                        isTeleporting = false;
-                        Teleport warpPortal = raycastHitInfo.transform.gameObject.GetComponent<Teleport>();
-                        //warpPortal.WarpDestination();
-                    }
-                    else if (isInteractingDoor)
-                    {
-                        isInteractingDoor = false;
-                        Teleport warpPortal = raycastHitInfo.transform.gameObject.GetComponent<Teleport>();
-                        warpPortal.isUsingDoor = true;
-                        //warpPortal.WarpDestination(true);
-                    }
-                    else if (isTalkingToNPC)
-                    {
-                        NPCController npcController = raycastHitInfo.transform.gameObject.GetComponent<NPCController>();
-                        npcController.selectedNpcId = npcController.id;
-                        Debug.Log("npc name = " + npcController.npcName);
-                        npcController.showConversationWindow();
-                        transform.forward = npcController.transform.position - transform.position;
-                        popMessage();
-                    }
-                    else if (isInteractingToObjects)
-                    {
-                        FrontBodyAnimator.SetTrigger("Pickup");
-                        BackBodyAnimator.SetTrigger("Pickup");
-                        transform.forward = raycastHitInfo.transform.position - transform.position;
-                        Destroy(raycastHitInfo.transform.gameObject, 0.5f);
-                    }
-                    else if (isInteractingToLootBox)
-                    {
-
-                    }
-                    else if (isInteractingToBlocks)
-                    {
-
-                    }
-                    else if (isUsingMachine)
-                    {
-                        boxMessage();
-                    }
+                    eventInteraction(layerName);
                 }
             }
 
@@ -317,7 +261,8 @@ public class Player : MonoBehaviour
     }
 
     void stopMoving() {
-        hasQueueInteraction = false;
+        approachingForInteraction = false;
+        zoomDialog = false;
         MeshAgent.ResetPath();
         FrontBodyAnimator.SetBool("isRunning", false);
         BackBodyAnimator.SetBool("isRunning", false);
@@ -358,5 +303,68 @@ public class Player : MonoBehaviour
         //     break;
         // }
         Debug.Log("Open option window");
+    }
+
+    void eventInteraction(string option) {
+        MeshAgent.ResetPath();
+        approachingForInteraction = false;
+        switch (option)
+        {
+            case "NPC":
+                zoomDialog = true;
+                
+                NPCController npcController = raycastHitInfo.transform.gameObject.GetComponent<NPCController>();
+                npcController.selectedNpcId = npcController.id;
+                npcController.showDialogWindow();
+
+                transform.forward = npcController.transform.position - transform.position;
+                
+                popMessage();
+                Debug.Log("npc name = " + npcController.npcName);
+                break;
+            case "Teleport":
+                Teleport warpPortal = raycastHitInfo.transform.gameObject.GetComponent<Teleport>();
+                break;
+            case "Door":
+                Teleport doorPortal = raycastHitInfo.transform.gameObject.GetComponent<Teleport>();
+                doorPortal.isUsingDoor = true;
+                break;
+            case "Object":
+                FrontBodyAnimator.SetTrigger("Pickup");
+                BackBodyAnimator.SetTrigger("Pickup");
+                transform.forward = raycastHitInfo.transform.position - transform.position;
+                Destroy(raycastHitInfo.transform.gameObject, 0.5f);
+                break;
+            case "LootBox":
+
+            case "Blocks":
+
+            case "Machine":
+
+            default:
+                Debug.Log("Unknown option");
+                break;
+        }
+    }
+
+    void audioFootStep() {
+        stepCoolDown -= Time.deltaTime;
+        if (stepCoolDown < -0.05f)
+        {
+            //GetComponent<AudioSource>().pitch = 0.8f + Random.Range (-0.025f, 0.025f);
+            //GetComponent<AudioSource>().PlayOneShot (footStep, 0.5f);
+            stepCoolDown = stepRate;
+        }
+    }
+
+    void testDebugAndLog() {
+        if (Input.GetKeyUp("space"))
+        {
+            //showBlockchainBridgeWindow();
+            //popMessage();
+            //FrontBodyAnimator.SetTrigger("Pickup");
+            //BackBodyAnimator.SetTrigger("Pickup");
+            print("Space key was released");
+        }
     }
 }

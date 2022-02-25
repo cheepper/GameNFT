@@ -33,7 +33,7 @@ public class NPCController : MonoBehaviour
         npcNameText = conversationPanel.transform.GetChild(0).transform.GetChild(1).gameObject.GetComponent<Text>();
 
         proceedButton = conversationPanel.transform.GetChild(1).gameObject.GetComponent<Button>();
-        proceedButton.onClick.AddListener(continueConversation);
+        proceedButton.onClick.AddListener(continueDialogWindow);
         
         pageLenght = npcScripts.Count - 1;
     }
@@ -41,10 +41,10 @@ public class NPCController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+    
     }
 
-    public void showConversationWindow() {
+    public void showDialogWindow() {
         npcNameText.text = npcName;
         conversationText.text = npcScripts[pageCounter];
         conversationAnimator.SetBool("isConversation", true);
@@ -53,14 +53,14 @@ public class NPCController : MonoBehaviour
         //transform.rotation = Quaternion.Lerp(transform.rotation, player.rotation, Time.time * 0.1f);
     }
 
-    private void continueConversation() {
+    private void continueDialogWindow() {
         if (selectedNpcId == id)
         {
             if (pageCounter == pageLenght)
             {
                 pageCounter = 0;
                 selectedNpcId = 0;
-                closeConversationWindow(); 
+                closeDialogWindow(); 
             }
             else
             {
@@ -70,8 +70,8 @@ public class NPCController : MonoBehaviour
         }
     }
 
-    private void closeConversationWindow() {
+    private void closeDialogWindow() {
         conversationAnimator.SetBool("isConversation", false);
-        playerScript.isTalkingToNPC = false;
+        playerScript.zoomDialog = false;
     }
 }
