@@ -17,6 +17,9 @@ public class BuildingManager : MonoBehaviour
 
     [SerializeField]
     private Toggle gridToggle;
+    private float angle = 90;
+
+    //public bool canRotate { get; set; }
 
     // Start is called before the first frame update
     void Start()
@@ -45,7 +48,7 @@ public class BuildingManager : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                if (CanBePlaced(pendingObj.transform.GetComponent<DragableObject>()))
+                if (CanBePlaced(pendingObj))
                 {
                     PlaceObject();
                 }
@@ -55,6 +58,9 @@ public class BuildingManager : MonoBehaviour
                 }
                 
             }
+            if (Input.GetKeyDown(KeyCode.R)) {
+                RotateObject();
+            }
         }
     }
     
@@ -63,6 +69,10 @@ public class BuildingManager : MonoBehaviour
         pendingObj = null;
     }
 
+    public void RotateObject() {
+        pendingObj.transform.Rotate(Vector3.up, angle);
+    }
+    
     private void FixedUpdate()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -78,9 +88,9 @@ public class BuildingManager : MonoBehaviour
         pendingObj = Instantiate(objects[index], pos, transform.rotation);
     }
 
-    private bool CanBePlaced(DragableObject param) {
+    private bool CanBePlaced(GameObject obj) {
 
-        return param.detected;
+        return obj.transform.GetComponent<DragableObject>().detected;
     }
 
     public void ToggleGrid()

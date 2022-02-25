@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637811495518403106
-    m_Hash: 186217724
+      ticks: 637813820055728826
+    m_Hash: 327141236
   m_LockFileStatus:
     m_FilePath: C:/Users/Reignier/Documents/GameNFT/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637811495518488122
-    m_Hash: 2430551553
+      ticks: 637813820055743826
+    m_Hash: 3928658948
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_PackageAssets:
