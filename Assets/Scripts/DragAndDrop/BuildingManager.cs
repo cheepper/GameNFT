@@ -18,6 +18,9 @@ public class BuildingManager : MonoBehaviour
     [SerializeField]
     private Toggle gridToggle;
     private float angle = 90;
+    private bool isEvenBlock;
+    private bool toggleBoolRotate;
+    private float toggleBoolPos;
 
     //public bool canRotate { get; set; }
 
@@ -35,10 +38,12 @@ public class BuildingManager : MonoBehaviour
             if (gridOn)
             {
                 pendingObj.transform.position = new Vector3(
-                    RoundToNearestGrid(pos.x),
+                    RoundToNearestGrid(pos.x) + toggleBoolPos,
                     (pendingObj.transform.localScale.y / 2),
-                    RoundToNearestGrid(pos.z)
+                    EvenBlockAdjustment(RoundToNearestGrid(pos.z)) + toggleBoolPos
+                    //RoundToNearestGrid(pos.z)
                     );
+                //pendingObj.transform.rotation = Quaternion.Euler(new Vector3(0, -45, 0));
                 //Debug.Log("Pending Obj Position: " + pendingObj.transform.position);
             }
             else 
@@ -66,11 +71,34 @@ public class BuildingManager : MonoBehaviour
     
     void PlaceObject()
     {
+        pendingObj.AddComponent<UnityEngine.AI.NavMeshObstacle>();
+        UnityEngine.AI.NavMeshObstacle obstacle = pendingObj.GetComponent<UnityEngine.AI.NavMeshObstacle>();
+        obstacle.size = new Vector3(1.5f,1.5f,1.5f);
+        obstacle.carving = true;
         pendingObj = null;
     }
 
     public void RotateObject() {
         pendingObj.transform.Rotate(Vector3.up, angle);
+        if (isEvenBlock)
+        {
+            if (toggleBoolRotate)
+            {
+                toggleBoolRotate = false;
+                toggleBoolPos = 0;
+            }
+            else
+            {
+                toggleBoolRotate = true;
+                toggleBoolPos = -2f;
+            }
+
+            Debug.Log("toggle rotate: " + toggleBoolRotate);
+        }
+        //else
+        //{
+        //    toggleBoolPos = 0;
+        //}
     }
     
     private void FixedUpdate()
@@ -86,6 +114,29 @@ public class BuildingManager : MonoBehaviour
     public void SelectObject(int index)
     {
         pendingObj = Instantiate(objects[index], pos, transform.rotation);
+        toggleBoolRotate = false;
+        toggleBoolPos = 0;
+        if (index % 2 == 1)
+        {
+            isEvenBlock = true;
+        }
+        else
+        {
+            isEvenBlock = false;
+        }
+        //Debug.Log("index: " + index);
+        //Debug.Log("isEvenBlock: " + isEvenBlock);
+    }
+
+    private float EvenBlockAdjustment(float size) {
+        if (isEvenBlock)
+        {
+            return size - 2f;
+        }
+        else
+        {
+            return size;
+        }
     }
 
     private bool CanBePlaced(GameObject obj) {

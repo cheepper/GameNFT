@@ -22,14 +22,21 @@ using System.Collections;
 			_t = transform;
 			_oldRotation = _t.rotation;
 			_angle.y = angleY;
-		}
+
+			//Debug.Log("(Start)Old rotation: " + _oldRotation);
+			//Debug.Log("(Start)position: " + _t.position);
+		//_t.position = new Vector3(16.5f, 5.8f, -28.8f);
+	}
 
 		void Update()
 		{
 			if(target && Input.GetMouseButton(1))
 			{
 				_angle.x += Input.GetAxis("Mouse X") * rotationSensitivity;
-			}
+			//Debug.Log("(Update)Old rotation: " + _oldRotation);
+			//Debug.Log("(Update)position: " + _t.position);
+			//Debug.Log("(Update)current rotation: " + _oldRotation);
+		}
 		}
 
 		void LateUpdate()

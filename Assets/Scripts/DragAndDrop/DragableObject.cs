@@ -5,6 +5,7 @@ using UnityEngine;
 public class DragableObject : MonoBehaviour
 {
     public bool detected;
+    public float half = 3;
     public LayerMask m_LayerMask;
     private Renderer cubeRenderer;
     // Start is called before the first frame update
@@ -21,7 +22,7 @@ public class DragableObject : MonoBehaviour
 
     private void DetectCollision()
     {
-        Collider[] hits = Physics.OverlapBox(transform.position, transform.localScale / 2.1f, Quaternion.identity, m_LayerMask);
+        Collider[] hits = Physics.OverlapBox(transform.position, transform.localScale / half, transform.rotation, m_LayerMask);
         int i = 0;
         
         while (i < hits.Length)
@@ -29,7 +30,7 @@ public class DragableObject : MonoBehaviour
             if (i >= 1)
             {
                 cubeRenderer.material.SetColor("_Color", Color.red);
-                //Debug.Log("Hit : " + hits[i].name + i);
+                Debug.Log("Hit : " + hits[i].name + i);
                 detected = false;
             }
             else
