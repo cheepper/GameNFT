@@ -112,4 +112,4 @@ MonoBehaviour:
   half: 3
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 65536
+    m_Bits: 196608

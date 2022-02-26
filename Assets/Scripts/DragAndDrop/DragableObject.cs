@@ -8,10 +8,18 @@ public class DragableObject : MonoBehaviour
     public float half = 3;
     public LayerMask m_LayerMask;
     private Renderer cubeRenderer;
+    private Transform[] cubeTransformChildren;
+    private List<Renderer> cubeRendererChildren = new List<Renderer>();
     // Start is called before the first frame update
     void Start()
     {
         cubeRenderer = transform.GetComponent<Renderer>();
+        cubeTransformChildren = GetComponentsInChildren<Transform>();
+
+        foreach (Transform child in cubeTransformChildren) 
+        {
+            cubeRendererChildren.Add(child.GetComponent<Renderer>());
+        }
     }
 
     // Update is called once per frame
@@ -30,12 +38,20 @@ public class DragableObject : MonoBehaviour
             if (i >= 1)
             {
                 cubeRenderer.material.SetColor("_Color", Color.red);
+                foreach (Renderer child in cubeRendererChildren)
+                {
+                    child.material.SetColor("_Color", Color.red);
+                }
                 //Debug.Log("Hit : " + hits[i].name + i);
                 detected = false;
             }
             else
             {
                 cubeRenderer.material.SetColor("_Color", Color.white);
+                foreach (Renderer child in cubeRendererChildren)
+                {
+                    child.material.SetColor("_Color", Color.white);
+                }
                 detected = true;
             }
             i++;
