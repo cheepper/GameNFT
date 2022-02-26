@@ -66,10 +66,12 @@ public class BuildingManager : MonoBehaviour
                 {
                     Debug.Log("cannot place here");
                 }
-                
             }
             if (Input.GetKeyDown(KeyCode.R)) {
                 RotateObject();
+            }
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                CancelPlaceObject();
             }
         }
     }
@@ -80,6 +82,12 @@ public class BuildingManager : MonoBehaviour
         UnityEngine.AI.NavMeshObstacle obstacle = pendingObj.GetComponent<UnityEngine.AI.NavMeshObstacle>();
         obstacle.size = new Vector3(1.5f,1.5f,1.5f);
         obstacle.carving = true;
+        pendingObj = null;
+    }
+
+    private void CancelPlaceObject()
+    {
+        Destroy(pendingObj);
         pendingObj = null;
     }
 
