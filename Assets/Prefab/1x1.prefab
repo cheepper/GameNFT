@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a26dbdecc283729449a8ed567822cc61, type: 2}
+  - {fileID: 2100000, guid: 9b7a70411417fe84294cc1711bc51fd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -112,4 +112,8 @@ MonoBehaviour:
   half: 3
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 196608
+    m_Bits: 196864
+  cubeTransformChildren: []
+  opaqueMaterial: {fileID: 2100000, guid: a26dbdecc283729449a8ed567822cc61, type: 2}
+  transparentMaterial: {fileID: 2100000, guid: 9b7a70411417fe84294cc1711bc51fd3, type: 2}
+  cubeRendererChildren: []

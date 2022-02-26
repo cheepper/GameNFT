@@ -23,6 +23,7 @@ public class BuildingManager : MonoBehaviour
     private bool isEvenBlock;
     private bool toggleBoolRotate;
     private float toggleBoolPos;
+    private float rotationSpeed = 20;
 
     //public bool canRotate { get; set; }
 
@@ -69,20 +70,34 @@ public class BuildingManager : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.R)) {
                 RotateObject();
+                /*
+                angle += 90;
+                if (angle >= 180)
+                {
+                    angle = 0;
+                }
+                Debug.Log("R: " + angle);
+                */
             }
             if (Input.GetKeyDown(KeyCode.Escape)) {
                 CancelPlaceObject();
             }
+
+            //SmoothRotateBlocks();
         }
     }
     
     private void PlaceObject()
     {
+        DragableObject script = pendingObj.GetComponent<DragableObject>();
+        script.UpdateMaterial(script.opaqueMaterial);
+
         pendingObj.AddComponent<UnityEngine.AI.NavMeshObstacle>();
         UnityEngine.AI.NavMeshObstacle obstacle = pendingObj.GetComponent<UnityEngine.AI.NavMeshObstacle>();
         obstacle.size = new Vector3(1.5f,1.5f,1.5f);
         obstacle.carving = true;
         pendingObj = null;
+        //angle = 0;
     }
 
     private void CancelPlaceObject()
@@ -91,8 +106,19 @@ public class BuildingManager : MonoBehaviour
         pendingObj = null;
     }
 
-    public void RotateObject() {
+    void SmoothRotateBlocks()
+    {
+        pendingObj.transform.rotation = Quaternion.Lerp(
+        pendingObj.transform.rotation,
+        Quaternion.Euler(pendingObj.transform.rotation.x, Mathf.Round(angle), 0),
+        rotationSpeed * Time.deltaTime
+        );
+    }
+
+    public void RotateObject() 
+    {
         pendingObj.transform.Rotate(Vector3.up, angle);
+        //Debug.Log(pendingObj.transform.rotation);
         if (isEvenBlock)
         {
             if (toggleBoolRotate)
@@ -105,13 +131,8 @@ public class BuildingManager : MonoBehaviour
                 toggleBoolRotate = true;
                 toggleBoolPos = -2f;
             }
-
-            Debug.Log("toggle rotate: " + toggleBoolRotate);
+            //Debug.Log("toggle rotate: " + toggleBoolRotate);
         }
-        //else
-        //{
-        //    toggleBoolPos = 0;
-        //}
     }
     
     private void FixedUpdate()
@@ -137,6 +158,10 @@ public class BuildingManager : MonoBehaviour
         {
             isEvenBlock = false;
         }
+        //Material mat = pendingObj.GetComponent<Renderer>().material;
+        //mat.SetFloat
+        //StandardShaderUtils.ChangeRenderMode(mat,StandardShaderUtils.BlendMode.Transparent);
+        //StandardShaderUtils.ToFadeMode(mat);
         //Debug.Log("index: " + index);
         //Debug.Log("isEvenBlock: " + isEvenBlock);
     }

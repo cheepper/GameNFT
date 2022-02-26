@@ -266,7 +266,7 @@ public class Player : MonoBehaviour
         MeshAgent.ResetPath();
         FrontBodyAnimator.SetBool("isRunning", false);
         BackBodyAnimator.SetBool("isRunning", false);
-        Debug.Log("Reset path");
+        //Debug.Log("Reset path");
     }
 
     bool hasReachedDestination() {
