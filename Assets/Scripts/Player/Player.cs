@@ -260,7 +260,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void stopMoving() {
+    public void stopMoving() {
         approachingForInteraction = false;
         zoomDialog = false;
         MeshAgent.ResetPath();

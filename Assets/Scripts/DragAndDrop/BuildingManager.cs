@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class BuildingManager : MonoBehaviour
 {
+    public Transform player;
+    private Player playerScript;
     public GameObject[] objects;
     public GameObject pendingObj;
     private Vector3 pos;
@@ -27,7 +29,7 @@ public class BuildingManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        playerScript = player.gameObject.GetComponent<Player>();
     }
 
     // Update is called once per frame
@@ -35,6 +37,9 @@ public class BuildingManager : MonoBehaviour
     {
         if (pendingObj != null)
         {
+            // Stop moving if started placing blocks
+            playerScript.stopMoving();
+
             if (gridOn)
             {
                 pendingObj.transform.position = new Vector3(
